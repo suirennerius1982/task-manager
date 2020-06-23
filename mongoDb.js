@@ -12,7 +12,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
 
     console.log('Conected sucessful!!!')
     const db = client.db('task-manager')
-    db.collection('users').insertOne({
+    /* db.collection('users').insertOne({
         name: 'Nerius',
         age: 27
     }, (error, result) => {
@@ -22,6 +22,22 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
 
         console.log(result.ops)
         console.log('User add!!!')
+    }) */
+    db.collection('users').insertMany([
+        {
+            name: 'Ruben',
+            age: 70
+        },
+        {
+            name: 'Juana',
+            age: 65
+        }
+    ], (error, result) => {
+        if (error) {
+            return console.log('Is not posible add are elements to db!!!')
+        }
+
+        console.log(result.ops)
     })
     console.log('User  is adding...')
 })
