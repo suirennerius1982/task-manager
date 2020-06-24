@@ -23,7 +23,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         console.log(result.ops)
         console.log('User add!!!')
     }) */
-    db.collection('users').insertMany([
+    /* db.collection('users').insertMany([
         {
             name: 'Ruben',
             age: 70
@@ -38,6 +38,27 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         }
 
         console.log(result.ops)
+    }) */
+
+    db.collection('tasks').insertMany([
+        {
+            description: 'Learning nodejs',
+            completed: false
+        },
+        {
+            description: 'Learn java8 lambdas',
+            completed: false
+        },
+        {
+            description: 'Learn java8 strems',
+            completed: false
+        }
+    ], (error, result) => {
+        if (error) {
+            return console.log('It not posible inserts are elements to data base')
+        }
+
+        console.log(result.ops)
     })
-    console.log('User  is adding...')
+    console.log('adding...')
 })
