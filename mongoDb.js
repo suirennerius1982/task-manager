@@ -12,6 +12,35 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
 
     console.log('Conected sucessful!!!')
     const db = client.db('task-manager')
+
+    db.collection('tasks').find({completed: false}).toArray((error, tasks) => {
+        if (error) {
+            return console.log('Error to connect to data base!!!') 
+        }
+        console.log(tasks)
+    })
+
+    db.collection('tasks').count({completed: true}, (error, count) => {
+        if (error) {
+            return console.log('Error to connect to data base!!!') 
+        }
+        console.log(count)
+    })
+
+    db.collection('tasks').findOne( {_id: new mongodb.ObjectID('5ef2642797264f203480690b')}, (error, task) => {
+        if (error) {
+            return console.log('Data base its not accesible!!!')
+        }
+
+        console.log(task)
+    })
+    /* db.collection('users').findOne({name: 'Ruben'}, (error, user) => {
+        if (error) {
+            return console.log('Data base not accesible!!!')
+        }
+        console.log(user)
+    }) */
+
     /* db.collection('users').insertOne({
         name: 'Nerius',
         age: 27
@@ -40,7 +69,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         console.log(result.ops)
     }) */
 
-    db.collection('tasks').insertMany([
+   /*  db.collection('tasks').insertMany([
         {
             description: 'Learning nodejs',
             completed: false
@@ -59,6 +88,6 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         }
 
         console.log(result.ops)
-    })
-    console.log('adding...')
+    }) */
+    console.log('Executing...')
 })
