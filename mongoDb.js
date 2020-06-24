@@ -13,6 +13,29 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
     console.log('Conected sucessful!!!')
     const db = client.db('task-manager')
 
+    console.log("Delete One task")
+
+    const idToRemove = new mongodb.ObjectID('5ef3557bf292ce7a179a15b7')
+
+    db.collection('tasks').findOne({
+        _id: idToRemove
+    }, (error, task) => {
+        if (error) {
+            return console.log(error)
+        }
+
+        console.log(`Task to delete have te falow description: ${task.description}`)
+    })
+
+
+    db.collection('tasks').deleteOne({
+        _id: idToRemove
+    }).then((result) => {
+        console.log(`The element deleted it this description: ${result.deletedCount}`)
+    }).catch((error) => {
+        console.log(error)
+    })
+
    /*  db.collection('tasks').find({completed: false}).toArray((error, tasks) => {
         if (error) {
             return console.log('Error to connect to data base!!!') 
@@ -35,7 +58,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         console.log(task)
     }) */
 
-    console.log('updating user!!!')
+    /* console.log('updating user!!!')
 
     db.collection('users').updateOne({
             _id: new mongodb.ObjectID("5ef252e733efa67eeacbd86d")
@@ -63,7 +86,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
             console.log('All tasks in state incomplete were update to state completed: Count elements updates: ' + result.modifiedCount)
         }).catch((reject) => {
             console.log(reject)
-        })
+        }) */
     /* db.collection('users').findOne({name: 'Ruben'}, (error, user) => {
         if (error) {
             return console.log('Data base not accesible!!!')
