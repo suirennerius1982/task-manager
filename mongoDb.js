@@ -13,7 +13,7 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
     console.log('Conected sucessful!!!')
     const db = client.db('task-manager')
 
-    db.collection('tasks').find({completed: false}).toArray((error, tasks) => {
+   /*  db.collection('tasks').find({completed: false}).toArray((error, tasks) => {
         if (error) {
             return console.log('Error to connect to data base!!!') 
         }
@@ -33,7 +33,37 @@ MongoClient.connect(urlToConect, {useNewUrlParser: true}, (error, client) => {
         }
 
         console.log(task)
-    })
+    }) */
+
+    console.log('updating user!!!')
+
+    db.collection('users').updateOne({
+            _id: new mongodb.ObjectID("5ef252e733efa67eeacbd86d")
+        }, {
+            $set: {
+                name: 'Nerius Perez'
+            },
+            $inc: {
+                age: 1
+            }
+        }).then((result) => {
+            console.log('user updated!!!')
+        }).catch((error) => {
+            console.log(error)
+        })
+
+        db.collection('tasks').updateMany({
+            completed: false
+        }, {
+            $set: {
+                completed: true
+            }
+        }).then((result) => {
+            if (result)
+            console.log('All tasks in state incomplete were update to state completed: Count elements updates: ' + result.modifiedCount)
+        }).catch((reject) => {
+            console.log(reject)
+        })
     /* db.collection('users').findOne({name: 'Ruben'}, (error, user) => {
         if (error) {
             return console.log('Data base not accesible!!!')
