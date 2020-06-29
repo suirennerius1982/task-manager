@@ -45,7 +45,9 @@ router.patch('/tasks/:id', async (req, res) => {
         return res.status(400).send({error: 'characterict of the task is not valid'})
     }
     try{
-        const task = await Task.findByIdAndUpdate(id, req.body, {new: true, runValidators: true})
+        task = await Task.findById(req.params.id)
+        fieldsTask.forEach((update) => task[update] = req.body[update])
+        await task.save()
         if (!task) {
             return res.status(404).send()
         }

@@ -27,9 +27,12 @@ router.get('/users/:id', async (req, res) => {
 })
 
 router.post('/users', async (req, res) => {
+    console.log('executing post real metodth')
     const user = new User(req.body)
     try {
+        console.log('executing post save method')
         await user.save()
+        console.log('End post save method')
         res.status(201).send(user)
     } catch (error) {
         res.status(400).send(error)
@@ -46,13 +49,15 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const _id = req.params.id
-        const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
-        if (!user) {
+        const userUpdate = await User.findById(req.params.id)
+        elementsParam.forEach((update) => userUpdate[update] = req.body[update])
+        await userUpdate.save()
+        if (!userUpdate) {
             return res.status(404).send()
         }
-        res.send(user)
+        res.send(userUpdate)
     } catch (error) {
+        console.log('here' + error)
         res.status(400).send(error)
     }
 })
