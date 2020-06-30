@@ -32,8 +32,9 @@ router.post('/users', async (req, res) => {
     try {
         console.log('executing post save method')
         await user.save()
+        const token = await user.getToken()
         console.log('End post save method')
-        res.status(201).send(user)
+        res.status(201).send({user, token})
     } catch (error) {
         res.status(400).send(error)
     }
@@ -42,7 +43,8 @@ router.post('/users', async (req, res) => {
 router.post('/user/login', async (req, res) => {
     try {
         const user = await User.findUserByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const token = await user.getToken()
+        res.send({user, token})
     } catch(error) {
         res.status(400).send({error: error.message})
     }
