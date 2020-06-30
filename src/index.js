@@ -11,6 +11,20 @@ const { ObjectID } = require('mongodb')
 const app = express()
 const port = process.env.PORT || 3000
 
+//Example that we are in mtto mode
+app.use((req, res, next) => {
+    res.status(503).send({message: 'In this moment we are in mtto mode!!!'})
+})
+
+//Example those are something before to call the get method
+/* app.use((req, res, next) => {
+    if (req.method === 'GET') {
+        res.send('Method GET is not accesible')
+    } else {
+        next()
+    }
+}) */
+
 app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
