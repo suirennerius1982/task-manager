@@ -15,9 +15,12 @@ app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
-const bcrypt = require('bcryptjs')
+//const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
-const myFuction = async (apsw) => {
+/* const myFuction = async (apsw) => {
+    
+
     const myPsw = 'nerius21!'
     const encryptNerius = await bcrypt.hash(apsw, 8)
     const encryptPsw = await bcrypt.hash(myPsw, 8)
@@ -26,9 +29,19 @@ const myFuction = async (apsw) => {
     console.log(encryptNerius)
     const isEqualPsw = await bcrypt.compare(apsw, encryptNerius)
     console.log(isEqualPsw?'true':'false')
+} */
+
+const myFuction = async () => {
+    const token = jwt.sign({id: 95519825}, 'prueba123', {expiresIn: '1 hours'})
+    console.log(token)
+
+    const data = jwt.verify(token, 'prueba123')
+    console.log(data)
 }
 
-myFuction('nerius21!')
+//myFuction('nerius21!')
+
+myFuction()
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`)
