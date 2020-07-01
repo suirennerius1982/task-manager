@@ -1,9 +1,8 @@
 const express = require('express')
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
-
+const jwt = require('jsonwebtoken')
 require('./db/mongoose')
-
 const User = require('./models/user')
 const Task = require('./models/task')
 const { ObjectID } = require('mongodb')
@@ -11,10 +10,14 @@ const { ObjectID } = require('mongodb')
 const app = express()
 const port = process.env.PORT || 3000
 
+app.use(express.json())
+app.use(userRouter)
+app.use(taskRouter)
+
 //Example that we are in mtto mode
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
     res.status(503).send({message: 'In this moment we are in mtto mode!!!'})
-})
+}) */
 
 //Example those are something before to call the get method
 /* app.use((req, res, next) => {
@@ -25,12 +28,8 @@ app.use((req, res, next) => {
     }
 }) */
 
-app.use(express.json())
-app.use(userRouter)
-app.use(taskRouter)
-
 //const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+
 
 /* const myFuction = async (apsw) => {
     
@@ -45,7 +44,9 @@ const jwt = require('jsonwebtoken')
     console.log(isEqualPsw?'true':'false')
 } */
 
-const myFuction = async () => {
+
+//Example about use of token
+/* const myFuction = async () => {
     const token = jwt.sign({id: 95519825}, 'prueba123', {expiresIn: '1 hours'})
     console.log(token)
 
@@ -55,7 +56,7 @@ const myFuction = async () => {
 
 //myFuction('nerius21!')
 
-myFuction()
+myFuction() */
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`)
