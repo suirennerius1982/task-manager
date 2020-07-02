@@ -3,17 +3,17 @@ const jwt = require('jsonwebtoken')
 
 const auth = async (req, res, next) => {
     try {
-        console.log(req.headers.authorization)
         token = req.headers.authorization.replace('Bearer ', '')
         const decode = jwt.verify(token, 'prueba123')
         const user = await User.findOne({_id: decode._id, 'tokens.token': token})
         if (!user) {
             throw new Error()
         }
+        req.token = token
         req.user = user
-    next()
+        next()
     } catch (error){
-        res.status(401).send({error: "Invalid token!!!"})
+        res.status(401).send({error: `Invalid token!!!' ${error.message}`})
     }    
 }
 

@@ -11,9 +11,9 @@ const userSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        default:0,
+        default: 0,
         validate(value) {
-            if(value < 0) {
+            if (value < 0) {
                 throw new Error('Age most be a positive number')
             }
         }
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         validate(value) {
-            if (!validator.isEmail(value)){
+            if (!validator.isEmail(value)) {
                 throw new Error('The mail is not correctly')
             }
         }
@@ -33,15 +33,15 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        trim:true,
+        trim: true,
         minlength: 6,
         validate(value) {
-            if(value.toUpperCase().includes('PASSWORD')) {
+            if (value.toUpperCase().includes('PASSWORD')) {
                 throw new Error('The passwor do not should contain the word "passwor", either uppercase or lowercase!!!')
             }
         }
     },
-    tokens: [ {
+    tokens: [{
         token: {
             type: String,
             required: true
@@ -50,16 +50,16 @@ const userSchema = new mongoose.Schema({
     ]
 })
 
-userSchema.methods.getToken = async function() {
+userSchema.methods.getToken = async function () {
     const user = this
-    token = jwt.sign({_id: user._id.toString()}, 'prueba123', {expiresIn: '1m'}) 
-    user.tokens = user.tokens.concat({token})
+    token = jwt.sign({ _id: user._id.toString() }, 'prueba123', { expiresIn: '10m' })
+    user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
 }
 
 userSchema.statics.findUserByCredentials = async (email, password) => {
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email })
     if (!user) {
         throw new Error('Credentials invalids. User not found,')
     }
@@ -70,14 +70,12 @@ userSchema.statics.findUserByCredentials = async (email, password) => {
     return user
 }
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     const user = this
     if (user.isModified('password')) {
         console.log('User saving or updating...')
         user.password = await bcrypt.hash(user.password, 8)
     }
-    console.log('executing save pree' + user.name)
-
     next()
 })
 
