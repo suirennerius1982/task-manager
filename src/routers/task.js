@@ -5,19 +5,22 @@ const User = require('../models/user')
 
 const router = new expresse.Router()
 
-router.get('/tasks', async (req, res) => {
+router.get('/tasks', auth, async (req, res) => {
     try {
-        const tasks = await Task.find({})
-        res.status(200).send(tasks)
+        //const tasks = await Task.find({})
+        //const user = await User.findById(req.user._id)
+        await req.user.populate('tasks').execPopulate()
+        res.status(200).send(req.user.tasks)
     } catch (error) {
         res.status(500).send(error)
     }
 })
 
-router.get('/tasks/:id', async (req, res) => {
+router.get('/tasks/:id', auth,async (req, res) => {
     try {
         const id = req.params.id
-        const task = await Task.findById(id)
+        //const task = await Task.findById(id)
+        const task = await Task.findOne({_id: id, owner: req.user._id})
         if (!task) {
             return res.status(404).send()
         }
@@ -41,8 +44,7 @@ router.post('/tasks', auth, async (req, res) => {
     }
 })
 
-router.patch('/tasks/:id', async (req, res) => {
-    const id = req.params.id
+router.patch('/tasks/:id', auth, async (req, res) => {
     const fieldsTask = Object.keys(req.body)
     const restricts = ['description', 'completed']
     const isValid = fieldsTask.every((element) => restricts.includes(element))
@@ -50,28 +52,29 @@ router.patch('/tasks/:id', async (req, res) => {
         return res.status(400).send({error: 'characterict of the task is not valid'})
     }
     try{
-        task = await Task.findById(req.params.id)
-        fieldsTask.forEach((update) => task[update] = req.body[update])
-        await task.save()
+        task = await Task.findOne({_id: req.params.id, owner: req.user.id})
         if (!task) {
             return res.status(404).send()
         }
+        fieldsTask.forEach((update) => task[update] = req.body[update])
+        await task.save()
         res.send(task)
 
     } catch(error) {
-        res.status(400).send(error)
+        res.status(400).send({error: error.message})
     }
 })
 
-router.delete('/tasks/:id', async (req, res) => {
+router.delete('/tasks/:id', auth, async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id)
+        //const task = await Task.findByIdAndDelete(req.params.id)
+        const task = await Task.findOneAndDelete({_id: req.params.id, owner: req.user.id})
         if (!task) {
             return res.status(404).send()
         }
         res.send(task)
     } catch (error) {
-        res.status(500).send()
+        res.status(500).send({error: error.message})
     }
 })
 
