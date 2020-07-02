@@ -5,9 +5,14 @@ const auth = async (req, res, next) => {
     try {
         token = req.headers.authorization.replace('Bearer ', '')
         const decode = jwt.verify(token, 'prueba123')
+        const idParam = req.params.id
+        const idToken = decode._id
+        if (idParam !== idToken) {
+            throw new Error('User id for this transacction is not valid!!!')
+        }
         const user = await User.findOne({_id: decode._id, 'tokens.token': token})
         if (!user) {
-            throw new Error()
+            throw new Error('This user not exist')
         }
         req.token = token
         req.user = user

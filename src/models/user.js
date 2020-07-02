@@ -50,6 +50,22 @@ const userSchema = new mongoose.Schema({
     ]
 })
 
+/* userSchema.methods.getPublicProfile = function() {
+    const user = this
+    userObject = user.toObject()
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
+} */
+
+userSchema.methods.toJSON = function() {
+        const user = this
+        const userObject = user.toObject()
+        delete userObject.password
+        delete userObject.tokens
+        return userObject
+}
+
 userSchema.methods.getToken = async function () {
     const user = this
     token = jwt.sign({ _id: user._id.toString() }, 'prueba123', { expiresIn: '10m' })
@@ -73,7 +89,6 @@ userSchema.statics.findUserByCredentials = async (email, password) => {
 userSchema.pre('save', async function (next) {
     const user = this
     if (user.isModified('password')) {
-        console.log('User saving or updating...')
         user.password = await bcrypt.hash(user.password, 8)
     }
     next()
