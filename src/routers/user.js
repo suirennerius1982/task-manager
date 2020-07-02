@@ -74,7 +74,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 })
 
-router.patch('/users/:id', auth, async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
     debugger
     const elementsParam = Object.keys(req.body)
     const allowedUpdate = ['name', 'email', 'password', 'age']
@@ -95,16 +95,12 @@ router.patch('/users/:id', auth, async (req, res) => {
     }
 })
 
-router.delete('/users/:id', auth, async (req, res) => {
+router.delete('/users/me', auth, async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id)
-        if (!user) {
-            return res.status(404).send()
-        }
-
-        res.send(user)
+        await req.user.remove()
+        res.send(req.user)
     } catch (error) {
-        res.status(500).send()
+        res.status(500).send({error: error.message})
     }
 })
 
