@@ -3,8 +3,6 @@ const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 const jwt = require('jsonwebtoken')
 require('./db/mongoose')
-const User = require('./models/user')
-const Task = require('./models/task')
 const { ObjectID } = require('mongodb')
 
 const app = express()
@@ -61,3 +59,21 @@ myFuction() */
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`)
 })
+
+const Task = require('./models/task')
+const User = require('./models/user')
+
+const main = async () => {
+    //Find the user of the task
+    /* const task = await Task.findById('5efe30113cc9632a002ba42c')
+    await task.populate('owner').execPopulate()
+    console.log(task.owner) */
+
+    //Reverse form: find the tasks of the user
+    const user = await User.findById('5efe2cc7fa44dd60fa83bbae')
+    await user.populate('tasks').execPopulate()
+    console.log(user.tasks)
+
+}
+
+main()
