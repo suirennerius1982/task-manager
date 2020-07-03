@@ -30,7 +30,7 @@ router.post('/users', async (req, res) => {
         await user.save()
         const token = await user.getToken()
         //res.status(201).send({user: user.getPublicProfile(), token})
-        res.send({user, token})
+        res.status(201).send({user, token})
     } catch (error) {
         res.status(400).send(error)
     }
@@ -97,6 +97,7 @@ router.patch('/users/me', auth, async (req, res) => {
 
 router.delete('/users/me', auth, async (req, res) => {
     try {
+        debugger
         await req.user.remove()
         res.send(req.user)
     } catch (error) {

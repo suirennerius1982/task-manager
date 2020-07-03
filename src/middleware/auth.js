@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 
 const auth = async (req, res, next) => {
     try {
+        debugger
         token = req.headers.authorization.replace('Bearer ', '')
         const decode = jwt.verify(token, 'prueba123')
         const idParam = req.params.id
