@@ -6,7 +6,8 @@ const multer = require('multer')
 const router = new express.Router()
 
 const upload = multer({
-    dest: 'images/avatar/',
+    //Is not necesary save in local storage because it is saved in data base
+    //dest: 'images/avatar/',
     limits: {
         fileSize: 1000000
     },
@@ -64,12 +65,9 @@ router.post('/users/login', async (req, res) => {
 
 router.post('/users/logout', auth, async (req, res) => {
     try {
-        debugger
-        console.log('here')
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token
         })
-        console.log(req.user.tokens)
         await req.user.save()
         res.send()
     } catch (error) {
@@ -110,7 +108,9 @@ router.patch('/users/me', auth, async (req, res) => {
     }
 })
 
-router.post('/user/me/avatar', upload.single('avatar'), (req, res) => {
+router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    req.user.avatar = req.file.buffer
+    await req.user.save()
     res.send()
 }, (error, req, res, next) => {
     //res.status(400).send({error: error.message})
@@ -124,11 +124,20 @@ router.post('/user/me/avatar', upload.single('avatar'), (req, res) => {
 
 router.delete('/users/me', auth, async (req, res) => {
     try {
-        debugger
         await req.user.remove()
         res.send(req.user)
     } catch (error) {
         res.status(500).send({ error: error.message })
+    }
+})
+
+router.delete('/user/me/avatar', auth, async (req, res) => {
+    try {
+        req.user.avatar = undefined
+        await req.user.save()
+        res.send(req.user)
+    } catch (error) {
+        res.status(500).send({error: error.message})
     }
 })
 
