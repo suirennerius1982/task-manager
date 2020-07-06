@@ -6,7 +6,17 @@ const multer = require('multer')
 const router = new express.Router()
 
 const upload = multer({
-    dest: 'images/avatar/'
+    dest: 'images/avatar/',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        //if (!file.originalname.endsWith('jpg')) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('File extensions not permited. Only processing jpgs and pngs file extensions!!!'))
+        }
+        cb(undefined, true)
+    }
 })
 
 router.get('/users/me', auth, async (req, res) => {
@@ -23,7 +33,7 @@ router.get('/users/:id', auth, async (req, res) => {
         }
 
         //res.status(200).send({user: user.getPublicProfile()})
-        res.send({user})
+        res.send({ user })
     } catch (error) {
         res.status(500).send(error)
     }
@@ -35,7 +45,7 @@ router.post('/users', async (req, res) => {
         await user.save()
         const token = await user.getToken()
         //res.status(201).send({user: user.getPublicProfile(), token})
-        res.status(201).send({user, token})
+        res.status(201).send({ user, token })
     } catch (error) {
         res.status(400).send(error)
     }
@@ -46,9 +56,9 @@ router.post('/users/login', async (req, res) => {
         const user = await User.findUserByCredentials(req.body.email, req.body.password)
         const token = await user.getToken()
         //res.send({user: user.getPublicProfile(), token})
-        res.send({user, token})
-    } catch(error) {
-        res.status(400).send({error: error.message})
+        res.send({ user, token })
+    } catch (error) {
+        res.status(400).send({ error: error.message })
     }
 })
 
@@ -62,10 +72,10 @@ router.post('/users/logout', auth, async (req, res) => {
         console.log(req.user.tokens)
         await req.user.save()
         res.send()
-    } catch(error) {
-        res.status(500).send({error: error.message})
+    } catch (error) {
+        res.status(500).send({ error: error.message })
     }
-    
+
 })
 
 router.post('/users/logoutAll', auth, async (req, res) => {
@@ -73,9 +83,9 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         req.user.tokens = new Array()
         await req.user.save()
         res.send(req.user)
-    } catch(error) {
+    } catch (error) {
         console.log(error.message)
-        res.status(500).send({error: error.message})
+        res.status(500).send({ error: error.message })
     }
 })
 
@@ -96,17 +106,21 @@ router.patch('/users/me', auth, async (req, res) => {
         res.send(req.user)
     } catch (error) {
         console.log('here' + error)
-        res.status(400).send({error: error.message})
+        res.status(400).send({ error: error.message })
     }
 })
 
 router.post('/user/me/avatar', upload.single('avatar'), (req, res) => {
-    try {
-        res.send()
-    } catch (error){
-        res.status(500).send({error: error.message})
+    res.send()
+}, (error, req, res, next) => {
+    //res.status(400).send({error: error.message})
+    if (error instanceof multer.MulterError) {
+        return res.status(500).send({ error: error.message })
+    } else if (error) {
+        return res.status(500).send({ error: error.message })
     }
 })
+
 
 router.delete('/users/me', auth, async (req, res) => {
     try {
@@ -114,11 +128,8 @@ router.delete('/users/me', auth, async (req, res) => {
         await req.user.remove()
         res.send(req.user)
     } catch (error) {
-        res.status(500).send({error: error.message})
+        res.status(500).send({ error: error.message })
     }
 })
-
-
-
 
 module.exports = router

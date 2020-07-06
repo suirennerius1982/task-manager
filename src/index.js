@@ -26,30 +26,16 @@ const upload = multer({
         }
         cb(undefined, true)
     }
-}).single('upload')
+})
 
-app.post('/upload', async (req, res) => {
-    await upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-          // A Multer error occurred when uploading.
-          console.log('here???')
+app.post('/upload', upload.single('avatar'), (req, res) => {
+        res.send()
+}, (error, req, res, next) => {
+        if (error instanceof multer.MulterError) {
           return res.status(500).send({error: err.message})
         } else if (err) {
-          // An unknown error occurred when uploading.
-          console.log('here???')
           return res.status(500).send({error: err.message})
         }
-     
-        // Everything went fine.
-        console.log('here OK')
-        res.send()
-      })
-    /* try{
-        console.log('here???')
-        res.send()
-    } catch(error) {
-        res.status(400).send({error: error.message})
-    } */
 }) 
 
 //Example that we are in mtto mode
