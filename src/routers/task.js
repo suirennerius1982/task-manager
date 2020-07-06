@@ -5,6 +5,8 @@ const User = require('../models/user')
 
 const router = new expresse.Router()
 
+
+//tasks?sortBy=createdAt:desc or /tasks?sortBy=completed:asc
 router.get('/tasks', auth, async (req, res) => {
     try {
         debugger
@@ -14,17 +16,23 @@ router.get('/tasks', auth, async (req, res) => {
         if (req.query.completed) {
             match.completed = req.query.completed === 'true'
         }
+        const sort = {}
+        if(req.query.sortBy) {
+            const separe = req.query.sortBy.split(':')
+            sort[separe[0]] = separe[1] === 'desc'? -1:1
+        }
         await req.user.populate({
             path: 'tasks',
             match,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
+                skip: parseInt(req.query.skip),
+                sort
             }
         }).execPopulate()
         res.status(200).send(req.user.tasks)
     } catch (error) {
-        res.status(500).send(error)
+        res.status(500).send({error: error.message})
     }
 })
 
