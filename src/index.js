@@ -12,14 +12,45 @@ app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
-/* const multer = require('multer')
-const upload = multer({
-    dest: 'images/'
-})
+const multer = require('multer')
 
-app.post('/upload', upload.single('upload'), (req, res) => {
-    res.send()
-}) */
+const upload = multer({
+    dest: 'images/',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        //if (!file.originalname.endsWith('jpg')) {
+        if (!file.originalname.match(/\.(jpg|png)$/)) {
+            return cb(new Error('File extensions not permited. Only processing jpgs and pngs file extensions!!!'))
+        }
+        cb(undefined, true)
+    }
+}).single('upload')
+
+app.post('/upload', async (req, res) => {
+    await upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          console.log('here???')
+          return res.status(500).send({error: err.message})
+        } else if (err) {
+          // An unknown error occurred when uploading.
+          console.log('here???')
+          return res.status(500).send({error: err.message})
+        }
+     
+        // Everything went fine.
+        console.log('here OK')
+        res.send()
+      })
+    /* try{
+        console.log('here???')
+        res.send()
+    } catch(error) {
+        res.status(400).send({error: error.message})
+    } */
+}) 
 
 //Example that we are in mtto mode
 /* app.use((req, res, next) => {
