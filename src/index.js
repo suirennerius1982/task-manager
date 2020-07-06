@@ -12,6 +12,15 @@ app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
+/* const multer = require('multer')
+const upload = multer({
+    dest: 'images/'
+})
+
+app.post('/upload', upload.single('upload'), (req, res) => {
+    res.send()
+}) */
+
 //Example that we are in mtto mode
 /* app.use((req, res, next) => {
     res.status(503).send({message: 'In this moment we are in mtto mode!!!'})

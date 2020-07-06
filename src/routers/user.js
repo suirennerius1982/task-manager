@@ -1,8 +1,13 @@
 const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const multer = require('multer')
 
 const router = new express.Router()
+
+const upload = multer({
+    dest: 'images/avatar/'
+})
 
 router.get('/users/me', auth, async (req, res) => {
     //res.send({user: req.user.getPublicProfile()})
@@ -95,6 +100,14 @@ router.patch('/users/me', auth, async (req, res) => {
     }
 })
 
+router.post('/user/me/avatar', upload.single('avatar'), (req, res) => {
+    try {
+        res.send()
+    } catch (error){
+        res.status(500).send({error: error.message})
+    }
+})
+
 router.delete('/users/me', auth, async (req, res) => {
     try {
         debugger
@@ -104,6 +117,8 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(500).send({error: error.message})
     }
 })
+
+
 
 
 module.exports = router
