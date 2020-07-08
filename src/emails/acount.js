@@ -1,15 +1,14 @@
 const sgMail = require('@sendgrid/mail')
-const sendgridAPIKey = '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'
-//'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'
+const sendgridAPIKey = process.env.SENDGRID_API_KEY
 
 sgMail.setApiKey(sendgridAPIKey)
 
 const sendWelcomeEmail = (email, name) => {
     sgMail.send({
         to: email,
-        from: 'suirennerius1982@gmail.com',
+        from: process.env.SENDGRID_EMAIL_FROM,
         subject: 'Welcome to Task Manager!!!',
-        text: `Welcome to the app, ${name} lest me know how you get along with the app.`
+        text: `Welcome to the app, ${name} let me know how you get along with the app.`
     })
 }
 

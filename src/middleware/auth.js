@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const auth = async (req, res, next) => {
     try {
         token = req.headers.authorization.replace('Bearer ', '')
-        const decode = jwt.verify(token, 'prueba123')
+        const decode = jwt.verify(token, process.env.JWT_SECRET)
         const idParam = req.params.id
         const idToken = decode._id
         /* if (idParam !== idToken) {
