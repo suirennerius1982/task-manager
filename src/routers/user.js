@@ -85,7 +85,6 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         await req.user.save()
         res.send(req.user)
     } catch (error) {
-        console.log(error.message)
         res.status(500).send({ error: error.message })
     }
 })
@@ -106,7 +105,6 @@ router.patch('/users/me', auth, async (req, res) => {
         //res.send({user: userUpdate.getPublicProfile()})
         res.send(req.user)
     } catch (error) {
-        console.log('here' + error)
         res.status(400).send({ error: error.message })
     }
 })

@@ -23,20 +23,53 @@ beforeEach(async () => {
     await new User(userOne).save()
 })
 
-test('Should sinup new user', async () => {
-    await request(app).post('/users').send({
-        name: 'Nerius',
+test('Should singup new user', async () => {
+    const response = await request(app).post('/users').send({
+        name: 'Perez',
         email: 'suirennerius1982@gmail.com',
         password: 'prueba123'
     }).expect(201)
+
+    //Assert that the data base was changed correctly
+    const user = await User.findById(response.body.user._id)
+    expect(user).not.toBeNull() 
+
+    //Asserting about the response
+    expect(response.body).toMatchObject({
+        user: {
+            name: 'Perez',
+            email: 'suirennerius1982@gmail.com'
+        },
+        token: user.tokens[0].token
+    })
+
+    //Check thst the password dosent in plain text
+    expect(user.password).not.toBe('prueba123')
 })
 
 test('Should login to app', async () => {
-    await request(app).post('/users/login').send({
-        name: userOne.name,
-        email: userOne.email,
-        password: userOne.password
-    }).expect(200)
+    const response = await request(app)
+                            .post('/users/login')
+                            .send({
+                                name: userOne.name,
+                                email: userOne.email,
+                                password: userOne.password
+                            })
+                            .expect(200)
+
+    const user = await User.findById(response.body.user._id)
+    expect(response.body).toMatchObject(
+                { 
+                    user:{
+                        name: user.name,
+                        email: user.email
+                    },
+                    token: user.tokens[1].token
+                }
+    )
+    //expect(response.body.token).toBe(user.tokens[1].token) 
+
+
 })
 
 test('Should logout the user', async () => {
@@ -68,16 +101,17 @@ test('Should not login because header token is not provider', async () => {
 })
 
 test('Should delete acount of user', async () => {
-    //console.log(userOne.tokens[0])
     await request(app)
                 .delete('/users/me')
                 .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
                 .send()
                 .expect(200)
+    const user = await User.findById(userOne._id)
+    expect(user).toBeNull()
 })
 
 test('Should not delete acount for unauthenticated user', async () => {
-    await request(app)
+    const response = await request(app)
                 .delete('/users/me')
                 .send()
                 .expect(401)
