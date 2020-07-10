@@ -109,7 +109,7 @@ router.patch('/users/me', auth, async (req, res) => {
     }
 })
 
-router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     //req.user.avatar = req.file.buffer
     const buffer = await sharp(req.file.buffer).resize({width:250, height:250}).png().toBuffer()
     req.user.avatar = buffer

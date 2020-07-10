@@ -1,27 +1,10 @@
 const request = require('supertest')
 const app = require('../src/app')
-const user = require('../src/models/user')
 const User = require('../src/models/user')
 const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
+const { userOne, setupDatabase} = require('./fixtures/db')
 
-const userOneId = new mongoose.Types.ObjectId()
-const userOne = {
-    _id: userOneId,
-    name: 'Digital Build Online',
-    email: 'digitalbuildonline@gmail.com',
-    password: 'prueba123',
-    tokens: [
-        {
-            token: jwt.sign({_id: userOneId}, process.env.JWT_SECRET)
-        }
-    ]
-}
-
-beforeEach(async () => {
-    await User.deleteMany()
-    await new User(userOne).save()
-})
+beforeEach(setupDatabase)
 
 test('Should singup new user', async () => {
     const response = await request(app).post('/users').send({
@@ -88,6 +71,16 @@ test('Should login sussefull', async () => {
                     password: userOne.password
                 })
                 .expect(200)
+})
+
+test('Should upload avatar image', async () => {
+    await request(app)
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .attach('avatar', 'tests/fixtures/mw.png')
+        .expect(200)
+    const user = await User.findById(userOne._id)
+    expect(user.avatar).toEqual(expect.any(Buffer))
 })
 
 test('Should not login because header token is not provider', async () => {
