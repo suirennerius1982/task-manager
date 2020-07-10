@@ -96,14 +96,14 @@ router.patch('/users/me', auth, async (req, res) => {
     const areValidparams = elementsParam.every((element) => allowedUpdate.includes(element))
 
     if (!areValidparams) {
-        return res.status(400).send({ error: 'Invalited updates!!!' })
+        return res.status(400).send({ error: 'Invalited params updates!!!' })
     }
 
     try {
         elementsParam.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
         //res.send({user: userUpdate.getPublicProfile()})
-        res.send(req.user)
+        res.status(200).send(req.user)
     } catch (error) {
         res.status(400).send({ error: error.message })
     }
