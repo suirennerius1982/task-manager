@@ -8,8 +8,8 @@ beforeEach(setupDatabase)
 
 test('Should singup new user', async () => {
     const response = await request(app).post('/users').send({
-        name: 'Perez',
-        email: 'suirennerius1982@gmail.com',
+        name: 'Metamorfosis Wow',
+        email: 'metamorfosiswow@gmail.com',
         password: 'prueba123'
     }).expect(201)
 
@@ -20,8 +20,8 @@ test('Should singup new user', async () => {
     //Asserting about the response
     expect(response.body).toMatchObject({
         user: {
-            name: 'Perez',
-            email: 'suirennerius1982@gmail.com'
+            name: 'Metamorfosis Wow',
+            email: 'metamorfosiswow@gmail.com'
         },
         token: user.tokens[0].token
     })

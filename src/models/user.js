@@ -110,7 +110,6 @@ userSchema.pre('remove', async function(next) {
     debugger
     const user = this
     const res = await Task.deleteMany({owner: user._id})
-    console.log(res.deletedCount)
 
     next()
 })
